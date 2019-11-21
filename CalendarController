@@ -1,0 +1,105 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Calendar extends CI_Controller {
+
+		function __construct()
+    {
+        // Call the Model constructor
+		parent::__construct();
+        $this->load->database();
+		$this->load->model('professor/calendar_model');
+		
+		$this->load->library("session");
+		if(!$this->session->userdata('logado')){
+            return redirect('login');
+        }
+      
+    }
+
+
+	/*Home page Calendar view  */
+	Public function index(){
+
+		$this->load->model('professor/calendar_model', 'calendar');
+
+		$data['calendar']=$this->calendar->getCalendarbyId($this->session->userdata('id'));
+		
+		$this->template->show('professor/calendar');
+	}
+
+	/*Get all Events */
+	
+
+	Public function getEvents()
+	{
+		$result=$this->calendar_model->getEvents();
+		echo json_encode($result);
+	}
+	/*Add new event */
+	
+	Public function addEvent()
+	{
+
+		$this->load->model('professor/alunos_model','alunos'); //para carregar um model, apelido: produtos
+            
+        $data['alunos']=$this->alunos->getAluno();
+
+
+		$this->load->model('usuarios_model','usuarios'); //para carregar um model, apelido: produtos
+            
+        $data['usuarios']=$this->usuarios->getUsuario();
+        
+        $data['idsessao']=$this->session->userdata('id');
+
+		
+		
+		
+		
+		$data = explode(' ',$_POST['start']);
+		$dataformatada = implode('-', array_reverse(explode('/',$data[0])));
+		$_POST['start'] = date('Y-m-d H:i:s',strtotime($dataformatada.' '.$data[1]));
+	
+		$data1 = explode(' ',$_POST['end']);
+		$dataformatada1 = implode('-', array_reverse(explode('/',$data1[0])));
+		$_POST['end'] = date('Y-m-d H:i:s',strtotime($dataformatada1.' '.$data1[1]));
+
+		$result=$this->calendar_model->addEvent();
+		echo json_encode($result);
+		//echo json_encode($_POST);
+
+		
+	}
+	/*Update Event */
+	Public function updateEvent()
+	{
+		$data = explode(' ',$_POST['start']);
+		$dataformatada = implode('-', array_reverse(explode('/',$data[0])));
+		$_POST['start'] = date('Y-m-d H:i:s',strtotime($dataformatada.' '.$data[1]));
+		
+		$data1 = explode(' ',$_POST['end']);
+		$dataformatada1 = implode('-', array_reverse(explode('/',$data1[0])));
+		$_POST['end'] = date('Y-m-d H:i:s',strtotime($dataformatada1.' '.$data1[1]));
+		
+		$result=$this->calendar_model->updateEvent();
+		echo $result;
+	}
+	/*Delete Event*/
+	Public function deleteEvent()
+	{
+
+		$result=$this->calendar_model->deleteEvent();
+		echo $result;
+	}
+	Public function dragUpdateEvent()
+	{	
+
+		$result=$this->calendar_model->dragUpdateEvent();
+		echo $result;
+	}
+
+
+
+}
+?>
+
