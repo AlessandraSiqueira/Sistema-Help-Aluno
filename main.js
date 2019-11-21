@@ -212,6 +212,18 @@ $(function(){
         
        // idatendimento = (data.event ? data.event.alunos_idalunos : '');
        // console.log(idusuario);
+		
+		$.ajax({
+			type: 'POST',
+			url: "/helpaluno/index.php/usuarios/indexjson",
+
+				dataType: 'json'
+		}).done(function(obj){
+				console.log(obj.DATA);
+				sessionStorage.setItem("customersData", JSON.stringify(obj.DATA));      
+		}).fail(function(jqXHR, textStatus, errorThrown){
+					alert('Error: '+errorThrown);
+		}); 
 
             $.ajax({
                 type: "get",
